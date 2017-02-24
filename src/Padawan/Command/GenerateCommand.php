@@ -9,6 +9,7 @@ use Padawan\Domain\Generator\IndexGenerator;
 use Padawan\Framework\Domain\Project\Persister;
 use Padawan\Framework\Domain\Project\InMemoryIndex;
 use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -22,6 +23,12 @@ class GenerateCommand extends CliCommand
                 "path",
                 InputArgument::OPTIONAL,
                 "Path to the project root. Default: current directory"
+            )
+            ->addOption(
+                "ignore-pattern",
+                null,
+                InputOption::VALUE_REQUIRED,
+                "Regex pattern to ignore files. Default: none"
             );
     }
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -35,6 +42,10 @@ class GenerateCommand extends CliCommand
 
         $projectRepository = $this->getContainer()->get(ProjectRepository::class);
         $project = $projectRepository->findByPath($path);
+
+        $ignorePattern = $input->getOption("ignore-pattern");
+
+        $project->setFilterPattern($ignorePattern);
         $generator = $this->getContainer()->get(IndexGenerator::class);
 
         $generator->generateProjectIndex($project);

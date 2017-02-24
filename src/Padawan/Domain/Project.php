@@ -9,6 +9,7 @@ class Project
     private $index;
     private $rootFolder;
     private $plugins = [];
+    private $filterPattern = null;
 
     public function __construct(Index $index, $rootFolder = "")
     {
@@ -50,5 +51,11 @@ class Project
             return $this->plugins[$key];
         }
         return [];
+    }
+    public function setFilterPattern($pattern) {
+        $this->filterPattern = $pattern;
+    }
+    public function getFilterPattern() {
+        return $this->filterPattern;
     }
 }

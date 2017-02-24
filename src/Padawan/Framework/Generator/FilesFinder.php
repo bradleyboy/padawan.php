@@ -31,6 +31,7 @@ class FilesFinder implements FilesFinderInterface
     protected function filterFiles(Project $project, $files)
     {
         $projectFiles = [];
+        $ignorePattern = $project->getFilterPattern();
         foreach ($files as $file) {
             if (!preg_match('/\.php$/', $file)) {
                 continue;
@@ -39,6 +40,10 @@ class FilesFinder implements FilesFinderInterface
                 // exclude test files
                 continue;
             }
+            if ($ignorePattern && preg_match("#{$ignorePattern}#", $file)) {
+                continue;
+            }
+
             $projectFiles[] = $this->path->relative($project->getRootDir(), $file);
         }
         return $projectFiles;
